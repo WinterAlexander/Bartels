@@ -1559,11 +1559,11 @@ if(Matlab_ROOT_DIR)
   file(TO_CMAKE_PATH ${Matlab_ROOT_DIR} Matlab_ROOT_DIR)
 endif()
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  set(_matlab_64Build FALSE)
-else()
+# if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+#   set(_matlab_64Build FALSE)
+# else()
   set(_matlab_64Build TRUE)
-endif()
+# endif()
 
 if(APPLE)
   set(_matlab_bin_prefix "mac") # i should be for intel
