@@ -6,7 +6,7 @@
 %    V  #V by 2 list of mesh vertex positions
 %    T  #T by 3 list of mesh tetrahedron indices into V
 % Outputs:
-%    dphidX  #T by 6 list of gradients of linear tetrahedron shape functions. Each row contains a flattened 3 by 4 gradient matrix 
+%    dphidX  #T by 6 list of gradients of linear tetrahedron shape functions. Each row contains a flattened 2 by 3 gradient matrix
 %        such that grad(phi) = reshape(dphidX(i,:)', 2,3)
 %
 % Example:

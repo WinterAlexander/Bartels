@@ -3,7 +3,9 @@
 #endif
 
 template<typename DefoType, typename ParameterType>
-typename DefoType::Scalar sim::psi_stvk_F(const Eigen::MatrixBase<DefoType> &F, const Eigen::MatrixBase<ParameterType> &params) {
+typename DefoType::Scalar sim::psi_stvk_F(const Eigen::MatrixBase<DefoType> &F,
+        const Eigen::MatrixBase<ParameterType> &params)
+{
 
     using Scalar = typename DefoType::Scalar;
 

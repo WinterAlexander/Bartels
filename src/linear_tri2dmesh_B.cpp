@@ -3,17 +3,19 @@
 #endif
 
 template<typename DerivedRet, int Options, typename StorageIndex, typename DerivedV>
-void sim::linear_tri2dmesh_B(Eigen::SparseMatrix<DerivedRet, Options, StorageIndex> &B, Eigen::MatrixBase<DerivedV> &V,  Eigen::Ref<const Eigen::MatrixXi> E) {
+void sim::linear_tri2dmesh_B(Eigen::SparseMatrix<DerivedRet, Options, StorageIndex> &B,
+        const Eigen::MatrixBase<DerivedV> &V,
+        Eigen::Ref<const Eigen::MatrixXi> E) {
     
-    Eigen::MatrixXd dX;
-    linear_tri2dmesh_dphi_dX(dX, V,  E);
- 
+    Eigen::MatrixXd dphi_dX;
+    linear_tri2dmesh_dphi_dX(dphi_dX, V, E);
+
     auto assemble_func = [](auto &dX, auto &e, auto &dX_dense) { 
 
         Eigen::Matrix3x<DerivedRet> F = Eigen::Matrix3x<DerivedRet>::Zero();  
     
         Eigen::Matrix<DerivedRet, 9,6> P; 
-        P<<1, 0, 0, 0, 0, 0, 
+        P<< 1, 0, 0, 0, 0, 0,
             0, 1, 0, 0, 0, 0, 
             0, 0, 0, 0, 0, 0, 
             0, 0, 1, 0, 0, 0, 
@@ -32,13 +34,20 @@ void sim::linear_tri2dmesh_B(Eigen::SparseMatrix<DerivedRet, Options, StorageInd
     Eigen::MatrixXi E_out;
     E_out.resize(E.rows(), 1);
 
-    for(unsigned int ii=0; ii<E_out.rows(); ++ii) {
-        E_out(ii,0) = ii;
+    for(unsigned int ii = 0; ii < E_out.rows(); ++ii) {
+        E_out(ii, 0) = ii;
     }
 
     //index set for rows of matrix is 
     Eigen::Matrix<DerivedRet,9,6> dXtmp;
-    sim::assemble(B, E.rows()*9, V.cols()*V.rows(), E,E_out, assemble_func, dXtmp, dX);
+    sim::assemble(B, // assembled
+            E.rows() * 9, // rows
+            V.cols() * V.rows(), // cols
+            E, //E_from
+            E_out, //E_to
+            assemble_func, //func
+            dXtmp, //tmp
+            dphi_dX); //params
     
 }
 
