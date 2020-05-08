@@ -11,7 +11,9 @@
 namespace sim {
     
     template<typename DerivedRet, int Options, typename StorageIndex, typename DerivedV>
-    void linear_tri2dmesh_B(Eigen::SparseMatrix<DerivedRet, Options, StorageIndex> &B, const Eigen::MatrixBase<DerivedV> &V,  Eigen::Ref<const Eigen::MatrixXi> E);
+    void linear_tri2dmesh_B(Eigen::SparseMatrix<DerivedRet, Options, StorageIndex> &B,
+            const Eigen::MatrixBase<DerivedV> &V,
+            Eigen::Ref<const Eigen::MatrixXi> E);
 }
 
 #ifndef SIM_STATIC_LIBRARY
