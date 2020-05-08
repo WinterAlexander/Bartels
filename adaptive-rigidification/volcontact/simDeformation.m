@@ -3,6 +3,7 @@
 %addpath('../distmesh')
 
 
+draw = 0;
 skip = 1;
 N = 450;        % number of steps
 g = -9.8;       % gravity
@@ -20,6 +21,8 @@ h = 0.01;%0.01; %0.00003;     % time step
 SE = 0; % Symplectic Euler or Backward Euler
 tol = 1e-6;  
 maxit = 15;
+
+clear meshes;
 
 % Good for a single triangle test:
 %p = [ 0, 0; 1 0; 1 1 ];
@@ -47,13 +50,22 @@ meshes(2) = makeMesh( p, t, rho, mu, lambda, alpha0, alpha1 );
 meshes(2).DOFIndexOffset = meshes(1).DOFIndexOffset + meshes(1).N*2;
 
 elapsed = 0;
-v = VideoWriter('anim4.avi');
-open(v);
+
+
+if draw == 1
+    v = VideoWriter('anim4.avi');
+    open(v);
+end
+
+for i = 1:size(meshes, 2)
+    V = reshape(meshes(i).p, size(meshes(i).p, 1)/2, 2);
+    meshes(i).B = linear_tri2dmesh_B(V, meshes(i).t);
+end
 
 for i = 1:N
 
     % Draw the meshes
-    if ( mod(i,skip) == 0 )
+    if (draw == 1 && mod(i,skip) == 0 )
         %subplot(2,1,1);  % uncomment to make other plots in the same figure for debugging!
         cla;
         hold on;
@@ -69,8 +81,11 @@ for i = 1:N
     [V, dVdp] = rayTraceEdges( meshes );
     axis equal;
     axis([-3,3,-4,2]);
-    F = getframe();
-    writeVideo(v,F);
+    
+    if draw == 1
+        F = getframe();
+        writeVideo(v,F);
+    end
     
     
     % Advance the state of the meshes
@@ -119,7 +134,23 @@ for i = 1:N
             %[deltav, fl, rr, it, rv] = pcg( fcn, rhs, tol, maxit );
             
             % SLOTH!!!
-            K = makeStiffnessMatrix( mesh ); 
+          
+            
+            F = mesh.B * mesh.p;
+            
+            for n = 1:size(F, 1)
+                if mod(n, 9) == 0
+                    F(n) = 1;
+                end
+            end
+            
+            params = zeros(size(mesh.t, 1), 2);
+            for n = 1:size(mesh.t, 1)
+                params(n, 1:2) = [mesh.mu, mesh.lambda];
+            end
+            
+            C = d2psi_neohookean_dF2(mesh.t, F, params);
+            K = -B * C * B; 
             A = ((1-h*mesh.alpha0)*mesh.M-(h*mesh.alpha1+h^2)*K);
             
             ii = mesh.unpinnedDOFs;

@@ -26,3 +26,5 @@ mesh.lambda = lambda;   % Lamé parameter
 mesh.alpha0 = alpha0;   % Rayleigh parameter
 mesh.alpha1 = alpha1;   % Rayleigh parameter
 mesh.DOFIndexOffset = 0; % offset of these DOF indexes in total list of indexes
+%mesh.B = zeros();
+%mesh.dphi_dX = 
