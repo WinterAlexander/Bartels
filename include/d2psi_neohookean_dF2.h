@@ -7,7 +7,9 @@
 namespace sim {
 
     template<typename HessianType, typename DefoType, typename ParameterType>
-    void d2psi_neohookean_dF2(Eigen::MatrixBase<HessianType> &ddw, const Eigen::MatrixBase<DefoType> &F, const Eigen::MatrixBase<ParameterType> &params);
+    void d2psi_neohookean_dF2(Eigen::MatrixBase<HessianType> &ddw,
+            const Eigen::MatrixBase<DefoType> &F,
+            const Eigen::MatrixBase<ParameterType> &params);
             
 }
 
