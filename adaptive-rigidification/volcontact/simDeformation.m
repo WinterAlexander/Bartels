@@ -3,7 +3,7 @@
 %addpath('../distmesh')
 
 
-draw = 0;
+makeVideo = 0;
 skip = 1;
 N = 450;        % number of steps
 g = -9.8;       % gravity
@@ -52,20 +52,20 @@ meshes(2).DOFIndexOffset = meshes(1).DOFIndexOffset + meshes(1).N*2;
 elapsed = 0;
 
 
-if draw == 1
-    v = VideoWriter('anim4.avi');
+if makeVideo == 1
+    v = VideoWriter('video.avi');
     open(v);
 end
 
 for i = 1:size(meshes, 2)
-    V = reshape(meshes(i).p, size(meshes(i).p, 1)/2, 2);
+    V = reshape(meshes(i).p, 2, size(meshes(i).p, 1)/2)';
     meshes(i).B = linear_tri2dmesh_B(V, meshes(i).t);
 end
 
 for i = 1:N
 
     % Draw the meshes
-    if (draw == 1 && mod(i,skip) == 0 )
+    if (mod(i,skip) == 0 )
         %subplot(2,1,1);  % uncomment to make other plots in the same figure for debugging!
         cla;
         hold on;
@@ -82,8 +82,8 @@ for i = 1:N
     axis equal;
     axis([-3,3,-4,2]);
     
-    if draw == 1
-        F = getframe();
+    F = getframe();
+    if makeVideo == 1
         writeVideo(v,F);
     end
     
@@ -133,9 +133,6 @@ for i = 1:N
             %fcn = @(x) afun(x, mesh, h);
             %[deltav, fl, rr, it, rv] = pcg( fcn, rhs, tol, maxit );
             
-            % SLOTH!!!
-          
-            
             F = mesh.B * mesh.p;
             
             for n = 1:size(F, 1)
@@ -146,11 +143,11 @@ for i = 1:N
             
             params = zeros(size(mesh.t, 1), 2);
             for n = 1:size(mesh.t, 1)
-                params(n, 1:2) = [mesh.mu, mesh.lambda];
+                params(n, 1:2) = [mesh.lambda, mesh.mu];
             end
             
-            C = d2psi_neohookean_dF2(mesh.t, F, params);
-            K = -B * C * B; 
+            C = d2psi_neohookean_dF2(mesh.t, reshape(F, 9, [])', params);
+            K = -mesh.B' * C * mesh.B; 
             A = ((1-h*mesh.alpha0)*mesh.M-(h*mesh.alpha1+h^2)*K);
             
             ii = mesh.unpinnedDOFs;
