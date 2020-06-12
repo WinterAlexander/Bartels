@@ -15,7 +15,7 @@
 
 //bartels
 #include <BlockDiagonalMatrix.h>
-#include <d2psi_neohookean_dF2.h>
+#include <d2psi_stvk_dF2.h>
 
 #ifdef BARTELS_USE_OPENMP
 #include <omp.h>
@@ -42,7 +42,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     
         #pragma omp for schedule(static)
         for(unsigned int ii = 0; ii < E.rows(); ii++) {
-            sim::d2psi_neohookean_dF2(Hele, sim::unflatten<3, 3>(F.row(ii)), params.row(ii));
+            sim::d2psi_stvk_dF2(Hele, sim::unflatten<3, 3>(F.row(ii)), params.row(ii));
             H.diagonalBlock(ii) = Hele;
         }
         
